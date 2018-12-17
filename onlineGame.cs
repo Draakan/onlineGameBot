@@ -37,8 +37,8 @@ namespace XOR
         {
             driver.Navigate().GoToUrl("http://v.time2play.mobi/game");
 
-            driver.FindElementById("session_login").SendKeys("asfedit");
-            driver.FindElementById("session_password").SendKeys("maksim333");
+            driver.FindElementById("session_login").SendKeys("your_login");
+            driver.FindElementById("session_password").SendKeys("your_password");
             driver.FindElementByXPath("//input[@value='Войти']").Click();
 
             Console.Clear();
@@ -67,20 +67,10 @@ namespace XOR
                     }
                     catch
                     {
-                        try
-                        {
-                            if (driver.FindElementByXPath("//div[@class='partial_time_ritual']/div[@class='block']").Text.Substring(0, 13).Equals("действует еще"))
-                            {
-                                isMutated = true;
-                                Console.WriteLine("действует еще");
-                            }
-                            else if (driver.FindElementByXPath("//div[@class='partial_time_ritual']/div[@class='block']").Text.Substring(0, 14).Equals("доступна через"))
-                            {
-                                isMutated = false;
-                                Console.WriteLine("доступна через");
-                            }
-                        }
-                        catch { }
+                        if (driver.FindElementByXPath("//div[@class='partial_time_ritual']/div[@class='block']").Text.Substring(0, 13).Equals("действует еще"))
+                            isMutated = true;
+                        else if (driver.FindElementByXPath("//div[@class='partial_time_ritual']/div[@class='block']").Text.Substring(0, 14).Equals("доступна через"))
+                            isMutated = false;
                     }
 
                     if (isMutated && !isPatruling)
@@ -96,6 +86,9 @@ namespace XOR
                         }
                         catch
                         {
+                            if (driver.FindElementByXPath("//div[@class='page_game_mine_index']/div[@class='block']").Text.Equals("Тайников больше не осталось."))
+                                haveTainiki = false;
+                            
                             string startSkip = "/game/mine/skip?drid=";
 
                             string oboroten = driver.PageSource.Substring(driver.PageSource.IndexOf(startSkip) + 21, 5);
@@ -141,7 +134,7 @@ namespace XOR
                         }
                         else
                         {
-                            if (!isPatruling && (countOfFights == 0) && (haveTainiki == false))
+                            if (!isPatruling && (countOfFights == 0 && haveTainiki == false))
                             {
                                 try
                                 {
@@ -154,7 +147,7 @@ namespace XOR
                                     isPatruling = true;
 
                                     timer = new Timer();
-                                    timer.Interval = 660000;
+                                    timer.Interval = 14400000;
                                     timer.Elapsed += OnTimeElapsed;
                                     timer.AutoReset = false;
                                     timer.Enabled = true;
